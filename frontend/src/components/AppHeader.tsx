@@ -1,0 +1,30 @@
+import { Link } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
+
+export function AppHeader() {
+  const { user, logout } = useAuth()
+
+  return (
+    <header className="app-header">
+      <Link className="brand" to="/">
+        <span className="brand-mark" aria-hidden="true">M</span>
+        <span>Merzado</span>
+      </Link>
+      {user ? (
+        <div className="header-actions">
+          <Link className="role-link" to={`/${user.role}`}>
+            {user.role}
+          </Link>
+          <button className="text-button" type="button" onClick={logout}>
+            Log out
+          </button>
+        </div>
+      ) : (
+        <nav className="header-actions" aria-label="Authentication">
+          <Link className="text-link" to="/login">Log in</Link>
+          <Link className="header-button" to="/signup">Sign up</Link>
+        </nav>
+      )}
+    </header>
+  )
+}

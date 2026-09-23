@@ -1,4 +1,10 @@
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Link, Navigate, Route, Routes } from 'react-router-dom'
+import { AppHeader } from './components/AppHeader'
+import { ProtectedRoute } from './components/ProtectedRoute'
+import { AuthProvider } from './auth/AuthContext'
+import { LoginPage } from './pages/LoginPage'
+import { RoleHomePage } from './pages/RoleHomePage'
+import { SignupPage } from './pages/SignupPage'
 
 function HomePage() {
   return (
@@ -37,13 +43,34 @@ function StatusPage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/status" element={<StatusPage />} />
-        <Route path="*" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <AppHeader />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/status" element={<StatusPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route
+            path="/buyer"
+            element={
+              <ProtectedRoute role="buyer">
+                <RoleHomePage role="buyer" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/supplier"
+            element={
+              <ProtectedRoute role="supplier">
+                <RoleHomePage role="supplier" />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
