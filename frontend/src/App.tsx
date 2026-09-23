@@ -5,6 +5,7 @@ import { AuthProvider } from './auth/AuthContext'
 import { LoginPage } from './pages/LoginPage'
 import { RoleHomePage } from './pages/RoleHomePage'
 import { SignupPage } from './pages/SignupPage'
+import { BuyerRfqPage } from './pages/BuyerRfqPage'
 
 function HomePage() {
   return (
@@ -56,6 +57,14 @@ function App() {
             element={
               <ProtectedRoute role="buyer">
                 <RoleHomePage role="buyer" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/buyer/rfqs"
+            element={
+              <ProtectedRoute role="buyer">
+                <BuyerRfqPage />
               </ProtectedRoute>
             }
           />
