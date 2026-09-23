@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ApiError } from '../api/auth'
 import { getBuyerRfqs, type Rfq } from '../api/rfqs'
 import { useAuth } from '../auth/AuthContext'
@@ -74,9 +74,11 @@ function RfqCard({ rfq }: { rfq: Rfq }) {
 export function BuyerRfqPage() {
     const { token, logout } = useAuth()
     const navigate = useNavigate()
+    const location = useLocation()
     const [rfqs, setRfqs] = useState<Rfq[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState('')
+    const successMessage = (location.state as { message?: string } | null)?.message
 
     async function loadRfqs() {
         if (!token) {
@@ -119,10 +121,16 @@ export function BuyerRfqPage() {
                         Keep your sourcing requests organized from one place.
                     </p>
                 </div>
-                <button className="primary-button create-button" type="button" disabled>
+                <button
+                    className="primary-button create-button"
+                    type="button"
+                    onClick={() => navigate('/buyer/rfqs/create')}
+                >
                     Create RFQ
                 </button>
             </section>
+
+            {successMessage && <div className="success-message dashboard-success">{successMessage}</div>}
 
             {loading && <div className="state-panel">Loading your RFQs...</div>}
 

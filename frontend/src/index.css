@@ -243,7 +243,8 @@ fieldset legend {
 }
 
 .auth-form input,
-.auth-form select {
+.auth-form select,
+.auth-form textarea {
   width: 100%;
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 0;
@@ -252,6 +253,7 @@ fieldset legend {
   background: rgba(255, 255, 255, 0.08);
   color: var(--ink);
   font: 16px Georgia, 'Times New Roman', serif;
+  resize: vertical;
 }
 
 .auth-form input:focus {
@@ -432,6 +434,32 @@ fieldset {
   color: var(--ink);
 }
 
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.form-actions .primary-button,
+.form-actions .secondary-button {
+  width: auto;
+}
+
+.form-actions .secondary-button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.rfq-form-card {
+  width: min(100%, 640px);
+}
+
+.dashboard-success {
+  max-width: 100%;
+  margin-bottom: 24px;
+}
+
 .rfq-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -546,6 +574,15 @@ fieldset {
 
   .auth-card {
     padding: 28px 22px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions .primary-button,
+  .form-actions .secondary-button {
+    width: 100%;
   }
 
   .header-actions {

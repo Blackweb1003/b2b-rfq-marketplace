@@ -6,6 +6,7 @@ import { LoginPage } from './pages/LoginPage'
 import { RoleHomePage } from './pages/RoleHomePage'
 import { SignupPage } from './pages/SignupPage'
 import { BuyerRfqPage } from './pages/BuyerRfqPage'
+import { CreateRfqPage } from './pages/CreateRfqPage'
 
 function HomePage() {
   return (
@@ -65,6 +66,14 @@ function App() {
             element={
               <ProtectedRoute role="buyer">
                 <BuyerRfqPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/buyer/rfqs/create"
+            element={
+              <ProtectedRoute role="buyer">
+                <CreateRfqPage />
               </ProtectedRoute>
             }
           />
