@@ -7,6 +7,9 @@ import { RoleHomePage } from './pages/RoleHomePage'
 import { SignupPage } from './pages/SignupPage'
 import { BuyerRfqPage } from './pages/BuyerRfqPage'
 import { CreateRfqPage } from './pages/CreateRfqPage'
+import { EditRfqPage } from './pages/EditRfqPage'
+import { BuyerQuotationsPage } from './pages/BuyerQuotationsPage'
+import { SupplierRfqPage } from './pages/SupplierRfqPage'
 
 function HomePage() {
   return (
@@ -78,10 +81,34 @@ function App() {
             }
           />
           <Route
+            path="/buyer/rfqs/:rfq_id/edit"
+            element={
+              <ProtectedRoute role="buyer">
+                <EditRfqPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/buyer/quotations"
+            element={
+              <ProtectedRoute role="buyer">
+                <BuyerQuotationsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/supplier"
             element={
               <ProtectedRoute role="supplier">
                 <RoleHomePage role="supplier" />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/supplier/rfqs"
+            element={
+              <ProtectedRoute role="supplier">
+                <SupplierRfqPage />
               </ProtectedRoute>
             }
           />

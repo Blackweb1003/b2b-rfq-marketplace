@@ -13,8 +13,18 @@ export function AppHeader() {
             {user ? (
                 <div className="header-actions">
                     {user.role === 'buyer' && (
-                        <Link className="text-link" to="/buyer/rfqs">
-                            My RFQs
+                        <>
+                            <Link className="text-link" to="/buyer/rfqs">
+                                My RFQs
+                            </Link>
+                            <Link className="text-link" to="/buyer/quotations">
+                                Quotations
+                            </Link>
+                        </>
+                    )}
+                    {user.role === 'supplier' && (
+                        <Link className="text-link" to="/supplier/rfqs">
+                            RFQ Marketplace
                         </Link>
                     )}
                     <Link className="role-link" to={`/${user.role}`}>

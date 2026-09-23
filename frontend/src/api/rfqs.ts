@@ -159,3 +159,38 @@ export async function closeBuyerRfq(token: string, rfqId: number): Promise<Rfq> 
 
     return body as Rfq
 }
+
+export interface SupplierRfqFilters {
+    search?: string
+    delivery_location?: string
+}
+
+export async function getSupplierRfqs(
+    token: string,
+    filters: SupplierRfqFilters = {},
+): Promise<Rfq[]> {
+    const params = new URLSearchParams()
+    if (filters.search?.trim()) params.set('search', filters.search.trim())
+    if (filters.delivery_location?.trim()) {
+        params.set('delivery_location', filters.delivery_location.trim())
+    }
+
+    const query = params.toString()
+    const response = await fetch(`/api/supplier/rfqs${query ? `?${query}` : ''}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    const body = await response.json().catch(() => null)
+
+    if (!response.ok) {
+        const detail = body?.detail
+        const message = Array.isArray(detail)
+            ? detail.map((item) => item.msg).join(', ')
+            : detail || 'Unable to load available RFQs.'
+
+        throw new ApiError(message, response.status)
+    }
+
+    return body as Rfq[]
+}

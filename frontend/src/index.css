@@ -375,6 +375,45 @@ fieldset {
   font-size: 18px;
 }
 
+.marketplace-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr) auto auto;
+  align-items: end;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(12, 22, 20, 0.42);
+}
+
+.marketplace-filters label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 11px;
+}
+
+.marketplace-filters input {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0;
+  padding: 11px 12px;
+  outline: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ink);
+  font: 15px Georgia, 'Times New Roman', serif;
+}
+
+.marketplace-filters input:focus {
+  border-color: var(--accent);
+}
+
+.filter-button {
+  width: auto;
+  white-space: nowrap;
+}
+
 .create-button {
   width: auto;
   min-width: 130px;
@@ -460,10 +499,122 @@ fieldset {
   margin-bottom: 24px;
 }
 
+.dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(5, 11, 10, 0.72);
+  z-index: 10;
+}
+
+.confirm-dialog {
+  width: min(100%, 460px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  padding: 30px;
+  background: #172521;
+  box-shadow: 0 20px 70px rgba(0, 0, 0, 0.35);
+}
+
+.confirm-dialog h2 {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: 32px;
+  font-weight: 400;
+}
+
+.confirm-dialog p:not(.eyebrow) {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.confirm-dialog strong {
+  color: var(--ink);
+  font-weight: 400;
+}
+
+.danger-button {
+  border: 1px solid #e98b79;
+  padding: 13px 16px;
+  background: #e98b79;
+  color: #241513;
+  cursor: pointer;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+}
+
+.danger-button:hover {
+  background: #f2a08e;
+}
+
+.danger-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 .rfq-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
+}
+
+.quotation-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.quotation-card {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  padding: 24px;
+  background: rgba(12, 22, 20, 0.42);
+}
+
+.quotation-card-header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.quotation-card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 27px;
+  font-weight: 400;
+}
+
+.quotation-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin: 28px 0 18px;
+  padding: 18px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.quotation-details dt {
+  margin-bottom: 5px;
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.quotation-details dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.quotation-message {
+  min-height: 48px;
+  margin: 0 0 20px;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .rfq-card {
@@ -618,7 +769,19 @@ fieldset {
     margin-bottom: 32px;
   }
 
+  .marketplace-filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filter-button {
+    width: 100%;
+  }
+
   .rfq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .quotation-grid {
     grid-template-columns: 1fr;
   }
 
