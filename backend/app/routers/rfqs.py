@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import require_buyer, require_supplier
@@ -126,6 +127,34 @@ def update_my_rfq(
     db.commit()
     db.refresh(rfq)
     return rfq
+
+
+@router.delete(
+    "/{rfq_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+def delete_my_rfq(
+    rfq_id: int,
+    current_user: User = Depends(require_buyer),
+    db: Session = Depends(get_db),
+) -> None:
+    rfq = get_owned_rfq(rfq_id, current_user, db)
+
+    if rfq.status != RFQStatus.OPEN.value:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only open RFQs can be deleted",
+        )
+
+    try:
+        db.delete(rfq)
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="RFQ cannot be deleted because it has quotations",
+        )
 
 
 @router.patch(
