@@ -10,7 +10,7 @@ function formatDate(value: string) {
     }).format(new Date(value))
 }
 
-function RfqCard({ rfq }: { rfq: Rfq }) {
+function RfqCard({ rfq, onView }: { rfq: Rfq; onView: (id: number) => void }) {
     return (
         <article className="rfq-card">
             <div className="rfq-card-header">
@@ -39,6 +39,11 @@ function RfqCard({ rfq }: { rfq: Rfq }) {
                     <dd>{formatDate(rfq.created_at)}</dd>
                 </div>
             </dl>
+            <div className="rfq-card-footer">
+                <button className="secondary-button" type="button" onClick={() => onView(rfq.id)}>
+                    View details
+                </button>
+            </div>
         </article>
     )
 }
@@ -162,7 +167,9 @@ export function SupplierRfqPage() {
 
             {!loading && !error && rfqs.length > 0 && (
                 <section className="rfq-grid" aria-label="Available RFQs">
-                    {rfqs.map((rfq) => <RfqCard key={rfq.id} rfq={rfq} />)}
+                    {rfqs.map((rfq) => (
+                        <RfqCard key={rfq.id} rfq={rfq} onView={(id) => navigate(`/supplier/rfqs/${id}`)} />
+                    ))}
                 </section>
             )}
         </main>

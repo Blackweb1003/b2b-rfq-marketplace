@@ -566,6 +566,68 @@ fieldset {
   gap: 18px;
 }
 
+.detail-page {
+  width: min(100% - 48px, 1120px);
+  margin: 0 auto;
+  padding: 7vh 0 10vh;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 28px;
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.65fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.detail-card {
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  padding: 34px;
+  background: rgba(12, 22, 20, 0.42);
+}
+
+.detail-title-row {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.detail-card h1 {
+  font-size: clamp(42px, 6vw, 70px);
+}
+
+.detail-description {
+  max-width: 650px;
+  margin: 28px 0;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+.detail-fields {
+  margin-bottom: 0;
+}
+
+.quotation-form-card {
+  width: auto;
+}
+
+.quotation-form-card h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 32px;
+  font-weight: 400;
+}
+
 .quotation-card {
   border: 1px solid rgba(255, 255, 255, 0.13);
   padding: 24px;
@@ -761,6 +823,19 @@ fieldset {
   .dashboard-page {
     width: min(100% - 32px, 760px);
     padding-top: 48px;
+  }
+
+  .detail-page {
+    width: min(100% - 32px, 760px);
+    padding-top: 48px;
+  }
+
+  .detail-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-card {
+    padding: 24px;
   }
 
   .dashboard-heading {

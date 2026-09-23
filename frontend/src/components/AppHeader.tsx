@@ -23,9 +23,14 @@ export function AppHeader() {
                         </>
                     )}
                     {user.role === 'supplier' && (
-                        <Link className="text-link" to="/supplier/rfqs">
-                            RFQ Marketplace
-                        </Link>
+                        <>
+                            <Link className="text-link" to="/supplier/rfqs">
+                                RFQ Marketplace
+                            </Link>
+                            <Link className="text-link" to="/supplier/quotations">
+                                My Quotations
+                            </Link>
+                        </>
                     )}
                     <Link className="role-link" to={`/${user.role}`}>
                         {user.role}

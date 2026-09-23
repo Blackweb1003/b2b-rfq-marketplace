@@ -194,3 +194,23 @@ export async function getSupplierRfqs(
 
     return body as Rfq[]
 }
+
+export async function getSupplierRfq(token: string, rfqId: number): Promise<Rfq> {
+    const response = await fetch(`/api/supplier/rfqs/${rfqId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    })
+    const body = await response.json().catch(() => null)
+
+    if (!response.ok) {
+        const detail = body?.detail
+        const message = Array.isArray(detail)
+            ? detail.map((item) => item.msg).join(', ')
+            : detail || 'Unable to load this RFQ.'
+
+        throw new ApiError(message, response.status)
+    }
+
+    return body as Rfq
+}

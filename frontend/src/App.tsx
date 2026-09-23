@@ -10,6 +10,8 @@ import { CreateRfqPage } from './pages/CreateRfqPage'
 import { EditRfqPage } from './pages/EditRfqPage'
 import { BuyerQuotationsPage } from './pages/BuyerQuotationsPage'
 import { SupplierRfqPage } from './pages/SupplierRfqPage'
+import { SupplierRfqDetailPage } from './pages/SupplierRfqDetailPage'
+import { SupplierQuotationsPage } from './pages/SupplierQuotationsPage'
 
 function HomePage() {
   return (
@@ -109,6 +111,22 @@ function App() {
             element={
               <ProtectedRoute role="supplier">
                 <SupplierRfqPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/supplier/rfqs/:rfq_id"
+            element={
+              <ProtectedRoute role="supplier">
+                <SupplierRfqDetailPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/supplier/quotations"
+            element={
+              <ProtectedRoute role="supplier">
+                <SupplierQuotationsPage />
               </ProtectedRoute>
             }
           />
