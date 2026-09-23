@@ -184,3 +184,29 @@ def list_open_rfqs_for_suppliers(
             query.order_by(RFQ.created_at.desc())
         ).all()
     )
+
+
+@supplier_router.get(
+    "/{rfq_id}",
+    response_model=RFQResponse,
+)
+def get_open_rfq_for_supplier(
+    rfq_id: int,
+    current_user: User = Depends(require_supplier),
+    db: Session = Depends(get_db),
+) -> RFQ:
+    rfq = db.scalar(select(RFQ).where(RFQ.id == rfq_id))
+
+    if rfq is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="RFQ not found",
+        )
+
+    if rfq.status != RFQStatus.OPEN.value:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="RFQ is not available",
+        )
+
+    return rfq
