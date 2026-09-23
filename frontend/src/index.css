@@ -1,0 +1,135 @@
+:root {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #e9e5dc;
+  background: #15211f;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --ink: #e9e5dc;
+  --muted: #a9b4ab;
+  --accent: #e5b875;
+  --panel: rgba(255, 255, 255, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 85% 12%, rgba(229, 184, 117, 0.16), transparent 28%),
+    linear-gradient(135deg, #15211f 0%, #20332d 56%, #111817 100%);
+}
+
+button,
+a {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
+
+.status-page {
+  width: min(100% - 48px, 760px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 12vh 0 10vh;
+}
+
+.status-mark {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  margin-bottom: 72px;
+  border: 1px solid rgba(229, 184, 117, 0.65);
+  color: var(--accent);
+  font-family: Georgia, serif;
+  font-size: 28px;
+}
+
+.eyebrow {
+  margin: 0 0 18px;
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+h1 {
+  max-width: 650px;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(44px, 8vw, 82px);
+  font-weight: 400;
+  line-height: 0.98;
+}
+
+.intro {
+  max-width: 520px;
+  margin: 28px 0 40px;
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.status-panel {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--panel);
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 13px;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #80c58b;
+  box-shadow: 0 0 0 5px rgba(128, 197, 139, 0.12);
+}
+
+.next-link {
+  display: block;
+  width: fit-content;
+  margin-top: 84px;
+  color: var(--accent);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.next-link:hover {
+  color: var(--ink);
+}
+
+code {
+  padding: 2px 5px;
+  background: rgba(255, 255, 255, 0.09);
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.85em;
+}
+
+@media (max-width: 600px) {
+  .status-page {
+    width: min(100% - 32px, 760px);
+    padding-top: 48px;
+  }
+
+  .status-mark {
+    margin-bottom: 64px;
+  }
+
+  .intro {
+    font-size: 18px;
+  }
+}
