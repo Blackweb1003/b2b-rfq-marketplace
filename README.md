@@ -1,1598 +1,712 @@
-\# MERZADO — B2B RFQ Marketplace
-
-
+# MERZADO — B2B RFQ Marketplace
 
 MERZADO is a full-stack B2B Request for Quotation (RFQ) marketplace that connects buyers with suppliers.
 
-
-
 Buyers can create and manage sourcing requests, while suppliers can discover open RFQs and submit quotations. The application includes JWT authentication, role-based access control, RFQ lifecycle management, quotation workflows, PostgreSQL persistence, and a React-based frontend.
 
+> **Project Status:** This project is configured for local development and evaluation. It has not been deployed to a production environment.
+
+---
+
+## Table of Contents
+
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Project Structure](#project-structure)
+- [Database](#database)
+- [Environment Configuration](#environment-configuration)
+- [Authentication](#authentication)
+- [User Roles](#user-roles)
+- [Workflows](#workflows)
+- [RFQ Lifecycle](#rfq-lifecycle)
+- [API Endpoints](#api-endpoints)
+- [Quotation Submission](#quotation-submission)
+- [Authorization and Ownership](#authorization-and-ownership)
+- [Error Handling](#error-handling)
+- [Local Setup](#local-setup)
+- [Running the Complete Application](#running-the-complete-application)
+- [Testing and Validation](#testing-and-validation)
+- [Security Considerations](#security-considerations)
+- [Development Dependencies](#development-dependencies)
+- [Future Improvements](#future-improvements)
+- [Repository](#repository)
+- [Author](#author)
+
+---
+
+## Features
+
+### Authentication
+
+- Buyer and Supplier registration
+- JWT-based login authentication
+- Argon2 password hashing
+- Role-based access control
+- Protected frontend routes
+- Bearer-token authenticated API requests
+
+### Buyer Features
+
+- Create RFQs
+- View own RFQs
+- View RFQ details
+- Edit open RFQs
+- Delete open RFQs
+- Close open RFQs
+- View quotations received for buyer RFQs
+- Manage RFQ lifecycle
+
+### Supplier Features
+
+- Browse available open RFQs
+- Search RFQs
+- Filter RFQs by delivery location
+- View RFQ details
+- Submit quotations
+- View submitted quotation history
+- Duplicate quotation prevention
+
+### Frontend
+
+- Responsive React UI
+- Role-based navigation
+- Protected routes
+- Loading states
+- Empty states
+- API error handling
+- Retry actions
+- Form validation
+- Confirmation dialogs
+- Success and error feedback
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- React
+- TypeScript
+- Vite
+- React Router
+- Fetch API
+- CSS
+
+### Backend
+
+- Python
+- FastAPI
+- SQLAlchemy
+- Pydantic
+- Alembic
+- JWT (`python-jose`)
+- Argon2 (`argon2-cffi`)
+- Uvicorn
+
+### Database
 
+- PostgreSQL
+- Psycopg 3
 
-\---
+### Tools
 
+- Git
+- GitHub
+- VS Code
+- Postman
 
+---
 
-\## Features
-
-
-
-\### Authentication
-
-
-
-\- Buyer and Supplier registration
-
-\- JWT-based login authentication
-
-\- Argon2 password hashing
-
-\- Role-based access control
-
-\- Protected frontend routes
-
-\- Bearer-token authenticated API requests
-
-
-
-\### Buyer Features
-
-
-
-\- Create RFQs
-
-\- View own RFQs
-
-\- View RFQ details
-
-\- Edit open RFQs
-
-\- Delete open RFQs
-
-\- Close open RFQs
-
-\- View quotations received for buyer RFQs
-
-\- Manage RFQ lifecycle
-
-
-
-\### Supplier Features
-
-
-
-\- Browse available open RFQs
-
-\- Search RFQs
-
-\- Filter RFQs by delivery location
-
-\- View RFQ details
-
-\- Submit quotations
-
-\- View submitted quotation history
-
-\- Duplicate quotation prevention
-
-
-
-\### Frontend
-
-
-
-\- Responsive React UI
-
-\- Role-based navigation
-
-\- Protected routes
-
-\- Loading states
-
-\- Empty states
-
-\- API error handling
-
-\- Retry actions
-
-\- Form validation
-
-\- Confirmation dialogs
-
-\- Success/error feedback
-
-
-
-\---
-
-
-
-\## Tech Stack
-
-
-
-\### Frontend
-
-
-
-\- React
-
-\- TypeScript
-
-\- Vite
-
-\- React Router
-
-\- Fetch API
-
-\- CSS
-
-
-
-\### Backend
-
-
-
-\- Python
-
-\- FastAPI
-
-\- SQLAlchemy
-
-\- Pydantic
-
-\- Alembic
-
-\- JWT (`python-jose`)
-
-\- Argon2 (`argon2-cffi`)
-
-\- Uvicorn
-
-
-
-\### Database
-
-
-
-\- PostgreSQL
-
-\- Psycopg 3
-
-
-
-\### Tools
-
-
-
-\- Git
-
-\- GitHub
-
-\- VS Code
-
-\- Postman
-
-
-
-\---
-
-
-
-\## Project Architecture
-
-
+## Architecture
 
 ```text
+                    MERZADO
 
-MERZADO
-
-│
-
-├── frontend/
-
-│   └── React + TypeScript + Vite
-
-│
-
-├── backend/
-
-│   └── FastAPI + SQLAlchemy
-
-│
-
-└── PostgreSQL
-
+              React + TypeScript
+                     │
+                     │ REST API + JWT
+                     ▼
+              FastAPI Backend
+                     │
+                     │ SQLAlchemy
+                     ▼
+                PostgreSQL
 ```
 
+### Application Responsibilities
 
+| Layer | Responsibilities |
+|-------|------------------|
+| **Frontend** | User interface, authentication state, role-based navigation, form handling and validation, API communication, loading / error / empty / success states |
+| **Backend** | Authentication, authorization, request validation, ownership checks, business rules, RFQ operations, quotation operations, database operations |
+| **Database** | User persistence, RFQ persistence, quotation persistence, relational data management through SQLAlchemy |
 
-Application flow:
+---
 
-
-
-```text
-
-React Frontend
-
-&#x20;     │
-
-&#x20;     │ REST API + JWT
-
-&#x20;     ▼
-
-FastAPI Backend
-
-&#x20;     │
-
-&#x20;     │ SQLAlchemy
-
-&#x20;     ▼
-
-PostgreSQL Database
-
-```
-
-
-
-The frontend handles the user interface and API communication.
-
-
-
-The backend is responsible for authentication, authorization, validation, ownership checks, business rules, and database operations.
-
-
-
-\---
-
-
-
-\## Project Structure
-
-
+## Project Structure
 
 ```text
-
 b2b-rfq-marketplace/
-
 │
-
 ├── backend/
-
 │   ├── app/
-
 │   │   ├── core/
-
 │   │   ├── models/
-
 │   │   ├── routers/
-
 │   │   ├── schemas/
-
 │   │   ├── database.py
-
 │   │   └── main.py
-
 │   │
-
 │   ├── alembic/
-
 │   ├── alembic.ini
-
 │   ├── .env.example
-
 │   └── requirements.txt
-
 │
-
 ├── frontend/
-
 │   ├── src/
-
 │   │   ├── api/
-
 │   │   ├── components/
-
 │   │   ├── pages/
-
 │   │   ├── App.tsx
-
 │   │   └── index.css
-
 │   │
-
 │   ├── package.json
-
 │   └── vite.config.ts
-
 │
-
+├── .gitignore
 └── README.md
-
 ```
 
+---
 
-
-\---
-
-
-
-\# Database
-
-
+## Database
 
 MERZADO uses PostgreSQL with SQLAlchemy.
 
+The application expects a local PostgreSQL database with the following configuration:
 
+| Setting  | Value      |
+|----------|------------|
+| Database | `merzado`  |
+| Host     | `localhost`|
+| Port     | `5432`     |
 
-The current development database configuration is:
+Database credentials are supplied through environment variables and should not be committed to the repository.
 
+### Create the Database
 
+Open PostgreSQL and run:
 
-```text
-
-postgresql+psycopg://postgres:postgres@localhost:5432/merzado
-
+```sql
+CREATE DATABASE merzado;
 ```
 
+---
 
+## Environment Configuration
 
-This means the local PostgreSQL database should be:
+The backend uses environment variables for local configuration.
 
+Create `backend/.env` based on `backend/.env.example`.
 
+Example:
 
-```text
-
-Database: merzado
-
-Host: localhost
-
-Port: 5432
-
-Username: postgres
-
-Password: postgres
-
+```env
+DATABASE_URL=postgresql+psycopg://postgres:your_password@localhost:5432/merzado
+SECRET_KEY=your-local-development-secret
 ```
 
+> **Important:** Replace the placeholder values with your local PostgreSQL credentials. Do not commit the `.env` file to GitHub.
 
+---
 
-> For production, these credentials should be moved to secure environment variables or a secrets manager. The current project configuration uses the development connection directly in the backend.
+## Authentication
 
+The application uses JWT-based authentication.
 
-
-\---
-
-
-
-\# Authentication
-
-
-
-The application uses JWT authentication.
-
-
-
-Login flow:
-
-
+### Login Flow
 
 ```text
-
 User
-
-&#x20;│
-
-&#x20;▼
-
+  │
+  ▼
 Frontend Login
-
-&#x20;│
-
-&#x20;▼
-
+  │
+  ▼
 POST /auth/login
-
-&#x20;│
-
-&#x20;▼
-
+  │
+  ▼
 FastAPI
-
-&#x20;│
-
-&#x20;▼
-
+  │
+  ▼
 JWT Access Token
-
-&#x20;│
-
-&#x20;▼
-
+  │
+  ▼
 Frontend
-
-&#x20;│
-
-&#x20;▼
-
+  │
+  ▼
 Authorization: Bearer <token>
-
 ```
-
-
 
 Passwords are hashed using Argon2 before being stored.
 
+The authenticated user's identity is derived from the JWT on protected backend operations.
 
+---
 
-The backend currently uses:
-
-
-
-```text
-
-SECRET\_KEY = "change-this-secret-key-in-production"
-
-```
-
-
-
-This is a development configuration and must be replaced with a secure secret before production deployment.
-
-
-
-\---
-
-
-
-\# User Roles
-
-
+## User Roles
 
 The application has two main roles:
 
+- `BUYER`
+- `SUPPLIER`
 
+Each role has separate protected frontend routes and backend authorization rules.
 
-```text
+| Role | Capabilities |
+|------|--------------|
+| **Buyer** | Create and manage RFQs, view quotations received for their RFQs |
+| **Supplier** | Browse open RFQs, submit quotations |
 
-BUYER
+---
 
-SUPPLIER
+## Workflows
 
-```
-
-
-
-Each role has its own protected frontend routes and backend authorization rules.
-
-
-
-\### Buyer
-
-
-
-Buyers manage sourcing requests and view supplier quotations.
-
-
-
-\### Supplier
-
-
-
-Suppliers browse buyer RFQs and submit quotations.
-
-
-
-\---
-
-
-
-\# Buyer Workflow
-
-
+### Buyer Workflow
 
 ```text
-
 Register
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 Login
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 Buyer Dashboard
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 Create RFQ
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 RFQ Status: OPEN
-
-&#x20;  │
-
-&#x20;  ├───────────────┐
-
-&#x20;  │               │
-
-&#x20;  ▼               ▼
-
-Edit/Delete      Supplier
-
-&#x20;  │              discovers RFQ
-
-&#x20;  │                  │
-
-&#x20;  │                  ▼
-
-&#x20;  │             Submit Quote
-
-&#x20;  │                  │
-
-&#x20;  │                  ▼
-
-&#x20;  └──────────── Buyer Views Quote
-
-&#x20;                     │
-
-&#x20;                     ▼
-
-&#x20;                 Close RFQ
-
-&#x20;                     │
-
-&#x20;                     ▼
-
-&#x20;                RFQ: CLOSED
-
+   │
+   ├───────────────┐
+   │               │
+   ▼               ▼
+Edit/Delete    Supplier
+   │            discovers RFQ
+   │                │
+   │                ▼
+   │          Submit Quote
+   │                │
+   └────────────────┘
+            │
+            ▼
+    Buyer Views Quotes
+            │
+            ▼
+       Close RFQ
+            │
+            ▼
+      RFQ: CLOSED
 ```
 
-
-
-\---
-
-
-
-\# Supplier Workflow
-
-
+### Supplier Workflow
 
 ```text
-
 Register
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 Login
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 Supplier Dashboard
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 RFQ Marketplace
-
-&#x20;  │
-
-&#x20;  ├── Search RFQs
-
-&#x20;  └── Filter by Delivery Location
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ├── Search RFQs
+   │
+   └── Filter by Delivery Location
+   │
+   ▼
 View RFQ Details
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 Submit Quotation
-
-&#x20;  │
-
-&#x20;  ▼
-
+   │
+   ▼
 My Quotations
-
 ```
 
+---
 
+## RFQ Lifecycle
 
-\---
+RFQs have two main states: `OPEN` and `CLOSED`.
 
-
-
-\# RFQ Lifecycle
-
-
-
-RFQs have two main states:
-
-
-
-```text
-
-OPEN
-
-CLOSED
-
-```
-
-
-
-\### OPEN
-
-
+### OPEN
 
 An open RFQ can be:
 
+- Viewed
+- Edited by its buyer
+- Deleted by its buyer
+- Closed by its buyer
+- Quoted on by eligible suppliers
 
+### CLOSED
 
-\- Viewed
+A closed RFQ remains visible but cannot be:
 
-\- Edited by its buyer
+- Edited
+- Deleted
+- Quoted on
 
-\- Deleted by its buyer
+---
 
-\- Closed by its buyer
+## API Endpoints
 
-\- Quoted on by eligible suppliers
+### Authentication
 
+| Method | Endpoint       | Description        |
+|--------|----------------|--------------------|
+| POST   | `/users/`      | Register a user    |
+| POST   | `/auth/login`  | Login and receive JWT |
 
+### Buyer RFQs
 
-\### CLOSED
+| Method | Endpoint                          | Description   |
+|--------|-----------------------------------|---------------|
+| POST   | `/api/buyer/rfqs`                 | Create RFQ    |
+| GET    | `/api/buyer/rfqs`                 | List buyer RFQs |
+| GET    | `/api/buyer/rfqs/{rfq_id}`        | Get RFQ details |
+| PUT    | `/api/buyer/rfqs/{rfq_id}`        | Update RFQ    |
+| DELETE | `/api/buyer/rfqs/{rfq_id}`        | Delete RFQ    |
+| PATCH  | `/api/buyer/rfqs/{rfq_id}/close`  | Close RFQ     |
 
+### Buyer Quotations
 
+| Method | Endpoint               | Description                              |
+|--------|------------------------|------------------------------------------|
+| GET    | `/api/buyer/quotations`| View quotations received for buyer RFQs  |
 
-A closed RFQ remains visible but cannot be edited, deleted, or quoted on.
+### Supplier RFQs
 
+| Method | Endpoint                     | Description       |
+|--------|------------------------------|-------------------|
+| GET    | `/api/supplier/rfqs`         | Browse open RFQs  |
+| GET    | `/api/supplier/rfqs/{rfq_id}`| View RFQ details  |
 
+The supplier marketplace supports the following query parameters:
 
-\---
+- `search`
+- `delivery_location`
 
+### Supplier Quotations
 
+| Method | Endpoint                    | Description                 |
+|--------|-----------------------------|-----------------------------|
+| POST   | `/api/supplier/quotations`  | Submit quotation            |
+| GET    | `/api/supplier/quotations`  | View submitted quotations   |
 
-\# API Endpoints
+---
 
+## Quotation Submission
 
-
-\## Authentication
-
-
-
-| Method | Endpoint | Description |
-
-|---|---|---|
-
-| POST | `/users/` | Register a user |
-
-| POST | `/auth/login` | Login and receive JWT |
-
-
-
-\---
-
-
-
-\## Buyer RFQs
-
-
-
-| Method | Endpoint | Description |
-
-|---|---|---|
-
-| POST | `/api/buyer/rfqs` | Create RFQ |
-
-| GET | `/api/buyer/rfqs` | List buyer RFQs |
-
-| GET | `/api/buyer/rfqs/{rfq\_id}` | Get RFQ details |
-
-| PUT | `/api/buyer/rfqs/{rfq\_id}` | Update RFQ |
-
-| DELETE | `/api/buyer/rfqs/{rfq\_id}` | Delete RFQ |
-
-| PATCH | `/api/buyer/rfqs/{rfq\_id}/close` | Close RFQ |
-
-
-
-\---
-
-
-
-\## Buyer Quotations
-
-
-
-| Method | Endpoint | Description |
-
-|---|---|---|
-
-| GET | `/api/buyer/quotations` | View quotations received for buyer RFQs |
-
-
-
-\---
-
-
-
-\## Supplier RFQs
-
-
-
-| Method | Endpoint | Description |
-
-|---|---|---|
-
-| GET | `/api/supplier/rfqs` | Browse open RFQs |
-
-| GET | `/api/supplier/rfqs/{rfq\_id}` | View RFQ details |
-
-
-
-The supplier marketplace supports:
-
-
-
-```text
-
-search
-
-delivery\_location
-
-```
-
-
-
-\---
-
-
-
-\## Supplier Quotations
-
-
-
-| Method | Endpoint | Description |
-
-|---|---|---|
-
-| POST | `/api/supplier/quotations` | Submit quotation |
-
-| GET | `/api/supplier/quotations` | View submitted quotations |
-
-
-
-\---
-
-
-
-\# Quotation Submission
-
-
-
-A supplier submits:
-
-
+A supplier submits quotation information such as:
 
 ```json
-
 {
-
-&#x20; "rfq\_id": 1,
-
-&#x20; "price": 50000,
-
-&#x20; "estimated\_delivery\_time": "15 days",
-
-&#x20; "message": "Quotation valid for 30 days"
-
+  "rfq_id": 1,
+  "price": 50000,
+  "estimated_delivery_time": "15 days",
+  "message": "Quotation valid for 30 days"
 }
-
 ```
 
+The supplier ID is **not** taken from the frontend request. The backend determines the authenticated supplier from the JWT, which prevents clients from submitting quotations on behalf of another supplier.
 
+---
 
-The supplier ID is not taken from the frontend request.
-
-
-
-The backend determines the authenticated supplier from the JWT.
-
-
-
-This prevents clients from submitting quotations on behalf of another supplier.
-
-
-
-\---
-
-
-
-\# Authorization and Ownership
-
-
+## Authorization and Ownership
 
 Ownership is enforced by the backend.
 
+- **Buyer RFQs:** the authenticated buyer is used to determine which RFQs the buyer can access or modify.
+- **Supplier quotations:** the authenticated supplier is used to determine ownership.
 
+Authenticated operations do not rely on client-provided ownership parameters such as `buyer_id` or `supplier_id`. Instead, the backend derives the authenticated user's identity from the JWT.
 
-For buyer RFQs, the authenticated buyer is used to determine which RFQs they can access or modify.
+---
 
-
-
-For supplier quotations, the authenticated supplier is used to determine ownership.
-
-
-
-The frontend does not send:
-
-
-
-```text
-
-buyer\_id
-
-supplier\_id
-
-```
-
-
-
-as ownership parameters for authenticated operations.
-
-
-
-Instead, the backend derives identity from the authenticated JWT.
-
-
-
-\---
-
-
-
-\# Error Handling
-
-
+## Error Handling
 
 The frontend handles common API responses including:
 
-
-
-```text
-
-400 Bad Request
-
-401 Unauthorized
-
-404 Not Found
-
-409 Conflict
-
-```
-
-
+| Status | Meaning |
+|--------|---------|
+| `400`  | Bad Request |
+| `401`  | Unauthorized |
+| `404`  | Not Found |
+| `409`  | Conflict |
 
 The UI provides:
 
-
-
-\- Loading states
-
-\- Empty states
-
-\- Error messages
-
-\- Retry actions
-
-\- Validation feedback
-
-\- Success messages
-
-\- Confirmation dialogs
-
-
+- Loading states
+- Empty states
+- Error messages
+- Retry actions
+- Validation feedback
+- Success messages
+- Confirmation dialogs
 
 A `401 Unauthorized` response clears the authentication state and redirects the user to the login page.
 
+---
 
+## Local Setup
 
-\---
-
-
-
-\# Local Setup
-
-
-
-\## Prerequisites
-
-
+### Prerequisites
 
 Install the following:
 
+- Python
+- Node.js
+- npm
+- PostgreSQL
+- Git
 
-
-\- Python
-
-\- Node.js
-
-\- npm
-
-\- PostgreSQL
-
-\- Git
-
-
-
-\---
-
-
-
-\## 1. Clone the Repository
-
-
+### 1. Clone the Repository
 
 ```bash
-
 git clone https://github.com/Blackweb1003/b2b-rfq-marketplace.git
-
 cd b2b-rfq-marketplace
-
 ```
 
+### 2. PostgreSQL Setup
 
-
-\---
-
-
-
-\# 2. PostgreSQL Setup
-
-
-
-Make sure PostgreSQL is running.
-
-
-
-Create the database:
-
-
+Make sure PostgreSQL is running, then create the database:
 
 ```sql
-
 CREATE DATABASE merzado;
-
 ```
 
+Configure the database connection in `backend/.env` using the structure provided in `backend/.env.example`:
 
-
-The current development backend expects:
-
-
-
-```text
-
-Host: localhost
-
-Port: 5432
-
-Database: merzado
-
-User: postgres
-
-Password: postgres
-
+```env
+DATABASE_URL=postgresql+psycopg://postgres:your_password@localhost:5432/merzado
+SECRET_KEY=your-local-development-secret
 ```
 
-
-
-Make sure the PostgreSQL user has permission to access the database.
-
-
-
-\---
-
-
-
-\# 3. Backend Setup
-
-
+### 3. Backend Setup
 
 From the project root:
 
-
-
-```powershell
-
+```bash
 cd backend
-
 ```
-
-
 
 Create a virtual environment:
 
-
-
-```powershell
-
+```bash
 python -m venv .venv
-
 ```
 
-
-
-Activate it:
-
-
+Activate it (Windows PowerShell):
 
 ```powershell
-
-.\\.venv\\Scripts\\Activate.ps1
-
+.\.venv\Scripts\Activate.ps1
 ```
-
-
 
 Install dependencies:
 
-
-
-```powershell
-
+```bash
 pip install -r requirements.txt
-
 ```
 
-
-
-\---
-
-
-
-\# 4. Run Database Migrations
-
-
-
-The project includes Alembic.
-
-
+### 4. Run Database Migrations
 
 From the `backend` directory:
 
-
-
-```powershell
-
+```bash
 alembic upgrade head
-
 ```
 
+### 5. Start the Backend
 
-
-\---
-
-
-
-\# 5. Start the Backend
-
-
-
-Run:
-
-
-
-```powershell
-
+```bash
 uvicorn app.main:app --reload
-
 ```
 
+- Backend: <http://127.0.0.1:8000>
+- Swagger docs: <http://127.0.0.1:8000/docs>
 
+### 6. Start the Frontend
 
-The backend will be available at:
+Open a second terminal. From the project root:
 
-
-
-```text
-
-http://127.0.0.1:8000
-
-```
-
-
-
-FastAPI Swagger documentation:
-
-
-
-```text
-
-http://127.0.0.1:8000/docs
-
-```
-
-
-
-\---
-
-
-
-\# 6. Start the Frontend
-
-
-
-Open a second terminal.
-
-
-
-From the project root:
-
-
-
-```powershell
-
+```bash
 cd frontend
-
-```
-
-
-
-Install dependencies:
-
-
-
-```powershell
-
 npm install
-
-```
-
-
-
-Start the development server:
-
-
-
-```powershell
-
 npm run dev
-
 ```
 
+The frontend will normally be available at <http://127.0.0.1:5173>.
 
+---
 
-The frontend will normally be available at:
+## Running the Complete Application
 
+Two terminals are required.
 
-
-```text
-
-http://127.0.0.1:5173
-
-```
-
-
-
-\---
-
-
-
-\# Running the Complete Application
-
-
-
-You need two terminals.
-
-
-
-\### Terminal 1 — Backend
-
-
+**Terminal 1 — Backend**
 
 ```powershell
-
-cd D:\\Assignment\_MERZADO\\backend
-
-.\\.venv\\Scripts\\Activate.ps1
-
+cd backend
+.\.venv\Scripts\Activate.ps1
 uvicorn app.main:app --reload
-
 ```
 
+**Terminal 2 — Frontend**
 
-
-\### Terminal 2 — Frontend
-
-
-
-```powershell
-
-cd D:\\Assignment\_MERZADO\\frontend
-
+```bash
+cd frontend
 npm run dev
-
 ```
 
+Then open <http://127.0.0.1:5173>.
 
+---
 
-Then open:
+## Testing and Validation
 
+The project was validated through static checks and manual end-to-end testing.
 
+### Static Checks
 
-```text
+**Frontend build** (from `frontend`):
 
-http://127.0.0.1:5173
-
-```
-
-
-
-\---
-
-
-
-\# Testing
-
-
-
-The project has been validated through both static checks and manual end-to-end testing.
-
-
-
-\## Frontend Build
-
-
-
-```powershell
-
+```bash
 npm run build
-
 ```
 
+**Backend compilation** (from `backend`):
 
-
-\## Backend Compilation
-
-
-
-```powershell
-
+```bash
 python -m compileall -q app
-
 ```
 
+**Backend application import:** the FastAPI application can be imported successfully and its OpenAPI schema can be generated successfully.
 
+**Route validation:** the implemented backend routes were verified against the frontend API calls.
 
-\## Backend Application Import
+### Manual Testing
 
+**Buyer**
 
+- Registration
+- Login
+- RFQ creation
+- RFQ listing
+- RFQ detail
+- RFQ editing
+- RFQ deletion
+- RFQ closing
+- Buyer quotation viewing
+- Buyer ownership isolation
 
-The FastAPI application can be imported successfully and its OpenAPI schema generated successfully.
+**Supplier**
 
+- Registration
+- Login
+- RFQ marketplace
+- RFQ search
+- Delivery-location filtering
+- RFQ detail
+- Quotation submission
+- Quotation history
 
+**Authorization**
 
-\## Route Validation
+- Buyer-only pages
+- Supplier-only pages
+- JWT authentication
+- Ownership restrictions
+- Protected API requests
 
+---
 
+## Security Considerations
 
-The implemented backend routes were verified against the frontend API calls.
+The current configuration is intended for local development and evaluation.
 
+For a production deployment, the following should be implemented:
 
+- Store database credentials in secure environment variables
+- Use a strong production JWT secret
+- Use a production PostgreSQL user with appropriate permissions
+- Configure HTTPS
+- Configure production CORS settings
+- Never commit `.env` files containing secrets
+- Use production-specific configuration
+- Add appropriate logging and monitoring
 
-\## Manual Testing
+The repository includes `backend/.env.example` as a reference for environment configuration.
 
+---
 
+## Development Dependencies
 
-The following workflows were tested:
+Backend dependencies are defined in `backend/requirements.txt`, including:
 
+- SQLAlchemy
+- Alembic
+- Psycopg
+- Pydantic
+- email-validator
+- argon2-cffi
+- FastAPI
+- Uvicorn
+- python-jose
 
+Frontend dependencies are defined in `frontend/package.json`.
 
-\### Buyer
+---
 
+## Future Improvements
 
+- [ ] Automated backend tests
+- [ ] Automated frontend tests
+- [ ] CI/CD pipeline
+- [ ] Docker deployment
+- [ ] Production logging
+- [ ] Email notifications
+- [ ] Supplier quotation comparison
+- [ ] Buyer quotation management actions
+- [ ] Advanced supplier filtering
+- [ ] Pagination for large RFQ and quotation datasets
+- [ ] Production deployment
 
-\- Registration
+---
 
-\- Login
+## Project Status
 
-\- RFQ creation
+This repository represents the completed local development version of the MERZADO B2B RFQ Marketplace assignment.
 
-\- RFQ listing
+The application is intended to be run locally using React + Vite, FastAPI, SQLAlchemy, and PostgreSQL.
 
-\- RFQ detail
+No production deployment is included in this submission.
 
-\- RFQ editing
+---
 
-\- RFQ deletion
+## Repository
 
-\- RFQ closing
+GitHub: <https://github.com/Blackweb1003/b2b-rfq-marketplace>
 
-\- Buyer quotation viewing
+---
 
-\- Buyer ownership isolation
+## Author
 
-
-
-\### Supplier
-
-
-
-\- Registration
-
-\- Login
-
-\- RFQ marketplace
-
-\- RFQ search
-
-\- Delivery-location filtering
-
-\- RFQ detail
-
-\- Quotation submission
-
-\- Quotation history
-
-
-
-\### Authorization
-
-
-
-\- Buyer-only pages
-
-\- Supplier-only pages
-
-\- JWT authentication
-
-\- Ownership restrictions
-
-\- Protected API requests
-
-
-
-\---
-
-
-
-\# Development Dependencies
-
-
-
-Backend dependencies are defined in:
-
-
-
-```text
-
-backend/requirements.txt
-
-```
-
-
-
-Current backend dependencies include:
-
-
-
-```text
-
-SQLAlchemy==2.0.36
-
-alembic==1.14.0
-
-psycopg\[binary]==3.3.6
-
-pydantic==2.13.5
-
-email-validator==2.3.0
-
-argon2-cffi
-
-fastapi
-
-uvicorn\[standard]
-
-python-jose\[cryptography]
-
-```
-
-
-
-\---
-
-
-
-\# Security Notes
-
-
-
-The current configuration is intended for local development.
-
-
-
-Before deploying to production:
-
-
-
-\- Replace the development JWT secret
-
-\- Do not hardcode database credentials
-
-\- Use environment variables for secrets
-
-\- Use a production PostgreSQL user/password
-
-\- Configure HTTPS
-
-\- Configure production CORS settings
-
-\- Do not commit `.env` files containing secrets
-
-
-
-The repository includes:
-
-
-
-```text
-
-backend/.env.example
-
-```
-
-
-
-for environment configuration reference.
-
-
-
-\---
-
-
-
-\# Future Improvements
-
-
-
-Possible future improvements include:
-
-
-
-\- Production environment configuration
-
-\- Automated backend tests
-
-\- Automated frontend tests
-
-\- CI/CD pipeline
-
-\- Docker deployment
-
-\- Production logging
-
-\- Email notifications
-
-\- Supplier quotation comparison
-
-\- Buyer quotation management actions
-
-\- Advanced supplier filtering
-
-\- Pagination for large RFQ/quotation datasets
-
-\- Production deployment
-
-
-
-\---
-
-
-
-\# Git Workflow
-
-
-
-Check repository status:
-
-
-
-```powershell
-
-git status
-
-```
-
-
-
-Stage changes:
-
-
-
-```powershell
-
-git add .
-
-```
-
-
-
-Commit:
-
-
-
-```powershell
-
-git commit -m "Your commit message"
-
-```
-
-
-
-Push:
-
-
-
-```powershell
-
-git push origin main
-
-```
-
-
-
-\---
-
-
-
-\# Repository
-
-
-
-GitHub:
-
-
-
-https://github.com/Blackweb1003/b2b-rfq-marketplace
-
-
-
-\---
-
-
-
-\# Author
-
-
-
-\*\*Kishan Malkam\*\*
-
-
-
-B.E. Artificial Intelligence \& Data Science
-
-
-
-GitHub: \[Blackweb1003](https://github.com/Blackweb1003)
-
+**Kishan Malkam**
+B.E. Artificial Intelligence & Data Science
